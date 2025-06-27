@@ -1,5 +1,4 @@
 # capa de servicio/lógica de negocio
-
 from ..transport import transport
 from ...config import config
 from ..persistence import repositories
@@ -10,9 +9,19 @@ from django.contrib.auth import get_user
 def getAllImages():
     # debe ejecutar los siguientes pasos:
     # 1) traer un listado de imágenes crudas desde la API (ver transport.py)
+    images=transport.getAllImages()
     # 2) convertir cada img. en una card.
+    lista_cards=[]
+    for elemento in images:
+        card=translator.fromRequestIntoCard(elemento)
+        types_aux = []  #sirve para agregar a cada card una lista de URLs de íconos correspondientes a los tipos del Pokémon representado en esa card. Es decir, convierte card.types (como ["fire", "flying"]) en card.types_imgs 
+        for t in card.types:
+           types_aux =(get_type_icon_url_by_name(t))
+        card.types_imgs = types_aux
     # 3) añadirlas a un nuevo listado que, finalmente, se retornará con todas las card encontradas.
-    pass
+        lista_cards.append(card)
+    return lista_cards
+   
 
 # función que filtra según el nombre del pokemon.
 def filterByCharacter(name):
